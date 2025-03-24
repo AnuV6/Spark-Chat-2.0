@@ -3,10 +3,11 @@ import { serverAuthorization, serverLogin, serverSignup } from "./actions";
 var serverAuth = undefined;
 var serverLoginDetails = undefined;
 var preLoadingMessages = {};
+const chatServerUrl = process.env.CHAT_SERVER_URL;
 
 export class WebSocketClient {
 	constructor() {
-		this.socket = new WebSocket("ws://localhost:21003/ws");
+		this.socket = new WebSocket(`${chatServerUrl}/ws`);
 		this.socket.addEventListener("open", (event) => this.onOpen(event));
 		this.socket.addEventListener("message", (event) => this.onMessage(event));
 		this.readyState = this.socket.readyState;
