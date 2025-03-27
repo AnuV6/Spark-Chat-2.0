@@ -5,7 +5,7 @@ FROM ballerina/ballerina:latest AS builder
 WORKDIR /app
 
 # Copy the backend files into the container
-COPY ./Backend /app/
+COPY . /app/
 
 # Print Ballerina version (optional)
 RUN bal version

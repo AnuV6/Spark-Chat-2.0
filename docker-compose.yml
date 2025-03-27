@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    image: spark-chat-backend
+    build:
+      context: ./Backend
+      dockerfile: dockerfile
+    container_name: spark-chat-backend
+    ports:
+      - "8080:8080"
+      - "21003:21003"
+    networks:
+      - spark-chat-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    image: spark-chat-frontend
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: spark-chat-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - SERVICE_SERVER_URL=http://spark-chat-backend:8080
+      - CHAT_SERVER_URL=ws://spark-chat-backend:21003/ws
+      - JWT_SECRET=PEgg4qdA52lSBl9wXhVbxIvf9zxtEBjvLAohaEt1BZQrWTyA4uXW760chFp93Ts1y0kIzWFp5otVBQ4LRZkJcavups8pGJLoDQfpxO4bWzh8bYH14yVk0PAhlkQH3ame59PFZDe5io48Ox69KT5AfR63bsc34xe2aIP3gw704OJkLzz5A1hKscgjcusCv4oi4JBvmodXkFz6abVqoSUdAAHzWu4KZM8HzwYAklr0HzIhjFOwocUx9I2Qm89xjjWtop0dfVyK1Ymt6eh1Sff5pHot4alUbSya2JTzC5zf6ZKe1Yiv7M4cIcmZdcaw8utowUJjeJbXv0ft1Wg4xZMp8pRUPk8UX4AQRZ21zqkfgxBhrJxOH3ZCllzBKuJggeBeSDHow2xljFkCJqcKMYibWgTCuvGTPJM8PqJG0m3awZZ3tkGYmOG4oqhHErbKW4y4VtFkWO14G8wF4XthdDC97ZzR06COwlgH3fUo6etOuIIkRPcyHfLkzx0i0XcosBuq
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - spark-chat-network
+
+networks:
+  spark-chat-network:
+    driver: bridge
